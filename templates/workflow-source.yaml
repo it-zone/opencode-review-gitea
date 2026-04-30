@@ -69,6 +69,9 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           
+          # LLM Gateway (optional, for LiteLLM, OpenRouter, Together AI, etc.)
+          # OPENAI_BASE_URL: ""          # e.g., http://localhost:4000/v1
+          
           # PR context
           PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
           REPO_OWNER: ${{ github.repository_owner }}

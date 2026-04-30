@@ -64,6 +64,8 @@ Configure the following secrets in your Gitea repository:
 |-------------|-------------|
 | `OPENCODE_GIT_TOKEN` | Gitea API Token (requires repo permissions) |
 | `DEEPSEEK_API_KEY` | DeepSeek API Key (default model) |
+| `ANTHROPIC_API_KEY` | Anthropic API Key (optional) |
+| `OPENAI_API_KEY` | OpenAI API Key (optional) |
 
 ### 2. Configure Model (Optional)
 
@@ -77,7 +79,32 @@ env:
   # MODEL: openai/gpt-4o                # Requires OPENAI_API_KEY
 ```
 
-### 3. Review Configuration
+### 3. Using LLM Gateways (Optional)
+
+You can use LLM gateways like **LiteLLM**, **OpenRouter**, **Together AI**, **NVIDIA NIM**, etc. via the OpenAI-compatible API:
+
+```yaml
+env:
+  # Point MODEL to an OpenAI-compatible provider
+  MODEL: openai/your-model-name
+  OPENAI_API_KEY: ${{ secrets.YOUR_API_KEY }}
+  # Set the gateway URL
+  OPENAI_BASE_URL: "https://openrouter.ai/api/v1"    # OpenRouter
+  # OPENAI_BASE_URL: "http://localhost:4000/v1"        # LiteLLM
+  # OPENAI_BASE_URL: "https://api.together.xyz/v1"     # Together AI
+```
+
+| Gateway | OPENAI_BASE_URL | Notes |
+|---------|-----------------|-------|
+| OpenRouter | `https://openrouter.ai/api/v1` | Use `OPENROUTER_API_KEY` |
+| LiteLLM | `http://localhost:4000/v1` | Self-hosted proxy |
+| Together AI | `https://api.together.xyz/v1` | |
+| NVIDIA NIM | `https://integrate.api.nvidia.com/v1` | |
+| Ollama (local) | `http://localhost:11434/v1` | No API key needed |
+
+> **Note**: When using gateways, set `MODEL` to `openai/<model-name>` so opencode routes through the OpenAI-compatible provider.
+
+### 4. Review Configuration
 
 These options work with both Docker and Source installations:
 

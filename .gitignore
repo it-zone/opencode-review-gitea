@@ -2,6 +2,9 @@
 node_modules/
 .opencode-review/node_modules/
 
+# Packages (development only)
+packages/
+
 # Bun
 *.lockb
 

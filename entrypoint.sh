@@ -54,17 +54,21 @@ validate_env() {
         missing+=("GITEA_SERVER_URL or GITHUB_SERVER_URL")
     fi
 
-    # Check for at least one LLM API key
-    if [ -z "$DEEPSEEK_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ] && [ -z "$OPENAI_API_KEY" ]; then
-        missing+=("DEEPSEEK_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY")
-    fi
-    
     if [ ${#missing[@]} -gt 0 ]; then
         log_error "Missing required environment variables:"
         for var in "${missing[@]}"; do
             echo "  - $var"
         done
         exit 1
+    fi
+
+    # Warn if no LLM API key is set (not fatal - some providers don't need one)
+    if [ -z "$DEEPSEEK_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ] && \
+       [ -z "$OPENAI_API_KEY" ] && [ -z "$LLM_API_KEY" ] && \
+       [ -z "$OPENROUTER_API_KEY" ] && [ -z "$OPENAI_BASE_URL" ]; then
+        log_warn "No LLM API key detected (DEEPSEEK_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY, LLM_API_KEY, OPENROUTER_API_KEY)"
+        log_warn "If you are using a local model or custom gateway, you can ignore this warning"
+        log_warn "Set OPENAI_BASE_URL to use an OpenAI-compatible gateway (LiteLLM, OpenRouter, etc.)"
     fi
     
     log_success "Environment validated"
@@ -247,9 +251,17 @@ main() {
             echo "Environment Variables:"
             echo "  GITEA_TOKEN        Gitea API token (required)"
             echo "  GITEA_SERVER_URL   Base URL like https://gitea.example.com (required)"
+            echo ""
+            echo "  LLM API Keys (at least one recommended):"
             echo "  DEEPSEEK_API_KEY   DeepSeek API key"
             echo "  ANTHROPIC_API_KEY  Anthropic API key"
             echo "  OPENAI_API_KEY     OpenAI API key"
+            echo "  LLM_API_KEY        Generic API key for other providers"
+            echo "  OPENROUTER_API_KEY OpenRouter API key"
+            echo ""
+            echo "  LLM Gateway (for LiteLLM, OpenRouter, Together AI, etc.):"
+            echo "  OPENAI_BASE_URL    Custom API base URL (e.g., http://localhost:4000/v1)"
+            echo ""
             echo "  MODEL              AI model (default: deepseek/deepseek-chat)"
             echo "  REVIEW_LANGUAGE    auto|en|zh-CN (default: auto)"
             echo "  REVIEW_STYLE       concise|balanced|thorough|security (default: balanced)"
