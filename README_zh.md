@@ -64,6 +64,8 @@ curl -fsSL https://raw.githubusercontent.com/ccsert/opencode-review-gitea/main/i
 |------------|------|
 | `OPENCODE_GIT_TOKEN` | Gitea API Token（需要 repo 权限） |
 | `DEEPSEEK_API_KEY` | DeepSeek API Key（默认模型） |
+| `ANTHROPIC_API_KEY` | Anthropic API Key（可选） |
+| `OPENAI_API_KEY` | OpenAI API Key（可选） |
 
 ### 2. 配置模型（可选）
 
@@ -77,7 +79,32 @@ env:
   # MODEL: openai/gpt-4o                # 需要 OPENAI_API_KEY
 ```
 
-### 3. 审查配置
+### 3. 使用 LLM 网关（可选）
+
+你可以通过 OpenAI 兼容 API 使用 **LiteLLM**、**OpenRouter**、**Together AI**、**NVIDIA NIM** 等 LLM 网关：
+
+```yaml
+env:
+  # 将 MODEL 指向 OpenAI 兼容的 provider
+  MODEL: openai/your-model-name
+  OPENAI_API_KEY: ${{ secrets.YOUR_API_KEY }}
+  # 设置网关 URL
+  OPENAI_BASE_URL: "https://openrouter.ai/api/v1"    # OpenRouter
+  # OPENAI_BASE_URL: "http://localhost:4000/v1"        # LiteLLM
+  # OPENAI_BASE_URL: "https://api.together.xyz/v1"     # Together AI
+```
+
+| 网关 | OPENAI_BASE_URL | 备注 |
+|------|-----------------|------|
+| OpenRouter | `https://openrouter.ai/api/v1` | 使用 `OPENROUTER_API_KEY` |
+| LiteLLM | `http://localhost:4000/v1` | 自建代理 |
+| Together AI | `https://api.together.xyz/v1` | |
+| NVIDIA NIM | `https://integrate.api.nvidia.com/v1` | |
+| Ollama（本地） | `http://localhost:11434/v1` | 无需 API Key |
+
+> **注意**: 使用网关时，请将 `MODEL` 设置为 `openai/<模型名称>`，以便 opencode 通过 OpenAI 兼容 provider 路由请求。
+
+### 4. 审查配置
 
 以下选项适用于 Docker 和源码两种安装方式：
 
