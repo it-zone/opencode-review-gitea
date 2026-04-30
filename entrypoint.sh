@@ -76,12 +76,16 @@ validate_env() {
 }
 
 infer_gitea_server_url() {
+    # Normalize: remove trailing slashes and /api/v1 suffix
     if [ -n "$GITEA_SERVER_URL" ]; then
+        export GITEA_SERVER_URL="${GITEA_SERVER_URL%/}"
+        export GITEA_SERVER_URL="${GITEA_SERVER_URL%/api/v1}"
         return 0
     fi
 
     if [ -n "$GITHUB_SERVER_URL" ]; then
-        export GITEA_SERVER_URL="$GITHUB_SERVER_URL"
+        export GITEA_SERVER_URL="${GITHUB_SERVER_URL%/}"
+        export GITEA_SERVER_URL="${GITEA_SERVER_URL%/api/v1}"
         return 0
     fi
 
@@ -204,6 +208,23 @@ print_config() {
     fi
 }
 
+check_architecture() {
+    local arch
+    arch=$(uname -m)
+    if [ "$arch" != "x86_64" ] && [ "$arch" != "amd64" ]; then
+        log_warn "Detected architecture: $arch (opencode-ai binary may not be supported)"
+        log_warn "If you encounter errors, please use the source installation method:"
+        log_warn "  https://github.com/ccsert/opencode-review-gitea#installation"
+        # Verify opencode binary actually works
+        if ! opencode --version >/dev/null 2>&1; then
+            log_error "opencode binary is not compatible with $arch architecture"
+            log_error "The pre-built Docker image only supports x86_64/amd64"
+            log_error "Please use the source installation method instead (--source)"
+            exit 1
+        fi
+    fi
+}
+
 # Main entrypoint
 main() {
     local command="${1:-review}"
@@ -211,6 +232,7 @@ main() {
     
     case "$command" in
         review)
+            check_architecture
             setup_config
             infer_gitea_server_url
             normalize_repo_context

@@ -13,6 +13,15 @@ LABEL org.opencontainers.image.licenses="MIT"
 # Install git and other dependencies
 RUN apk add --no-cache git curl bash
 
+# Check architecture - opencode-ai binary only supports x86_64/amd64
+# ARM users should use the source installation method instead
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" != "x86_64" ] && [ "$ARCH" != "amd64" ]; then \
+        echo "⚠️  WARNING: opencode-ai binary may not support $ARCH architecture" && \
+        echo "   If you encounter errors, please use the source installation method:" && \
+        echo "   https://github.com/ccsert/opencode-review-gitea#installation" ; \
+    fi
+
 # Install opencode CLI globally
 RUN bun add -g opencode-ai
 
