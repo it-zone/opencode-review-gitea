@@ -10,9 +10,9 @@ LABEL org.opencontainers.image.source="https://github.com/ccsert/opencode-review
 LABEL org.opencontainers.image.description="AI-powered code review for Gitea/Forgejo PRs"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Install git and other dependencies
+# Install git and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git curl bash \
+    git curl bash nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Install opencode CLI globally
