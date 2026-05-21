@@ -175,6 +175,8 @@ docker run --rm \
 
 `REPO_NAME` can be either `repo` or `owner/repo` (entrypoint will normalize it).
 
+> **Note**: The Docker image currently only supports **x86_64/amd64** architecture. ARM devices (Raspberry Pi, etc.) should use the [Source installation](#local-testing-source) method instead.
+
 ### Local Testing (Source)
 
 ```bash

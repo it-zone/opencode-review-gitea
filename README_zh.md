@@ -175,6 +175,8 @@ docker run --rm \
 
 `REPO_NAME` 既可以传 `repo`，也可以传 `owner/repo`（entrypoint 会自动规范化）。
 
+> **注意**: Docker 镜像目前仅支持 **x86_64/amd64** 架构。ARM 设备（树莓派等）请使用[源码安装](#本地测试源码)方式。
+
 ### 本地测试（源码）
 
 ```bash

@@ -44,13 +44,18 @@ interface PRInfo {
   merged: boolean
 }
 
+function normalizeBaseUrl(url: string): string {
+  return url.replace(/\/+$/, "").replace(/\/api\/v1\/?$/, "")
+}
+
 async function giteaFetch(endpoint: string, options: RequestInit = {}) {
-  const baseUrl = process.env.GITEA_SERVER_URL || process.env.GITHUB_SERVER_URL
+  const rawUrl = process.env.GITEA_SERVER_URL || process.env.GITHUB_SERVER_URL
   const token = process.env.GITEA_TOKEN || process.env.GITHUB_TOKEN
 
-  if (!baseUrl) throw new Error("GITEA_SERVER_URL environment variable is required")
+  if (!rawUrl) throw new Error("GITEA_SERVER_URL environment variable is required")
   if (!token) throw new Error("GITEA_TOKEN environment variable is required")
 
+  const baseUrl = normalizeBaseUrl(rawUrl)
   const url = `${baseUrl}/api/v1${endpoint}`
   
   // Build headers properly
@@ -74,6 +79,16 @@ async function giteaFetch(endpoint: string, options: RequestInit = {}) {
 
   if (!response.ok) {
     const text = await response.text()
+    if (response.status === 404) {
+      throw new Error(
+        `Gitea API error: 404 Not Found for ${url}\n` +
+        `Possible causes:\n` +
+        `  - GITEA_SERVER_URL is incorrect (current: ${rawUrl})\n` +
+        `  - Repository or PR does not exist\n` +
+        `  - Token does not have access to this resource\n` +
+        `Response: ${text}`
+      )
+    }
     throw new Error(`Gitea API error: ${response.status} ${response.statusText} - ${text}`)
   }
 
