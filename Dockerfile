@@ -4,14 +4,16 @@
 # Build: docker build -t ghcr.io/ccsert/opencode-review:latest .
 # Run:   docker run --rm -v $(pwd):/workspace -e GITEA_TOKEN=xxx ghcr.io/ccsert/opencode-review
 
-FROM oven/bun:1-alpine
+FROM oven/bun:1
 
 LABEL org.opencontainers.image.source="https://github.com/ccsert/opencode-review-gitea"
 LABEL org.opencontainers.image.description="AI-powered code review for Gitea/Forgejo PRs"
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Install git and other dependencies
-RUN apk add --no-cache git curl bash
+# Install git and runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl bash nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install opencode CLI globally
 RUN bun add -g opencode-ai
