@@ -295,6 +295,7 @@ main() {
             
         *)
             # Pass through to opencode
+            exec opencode models --refresh
             exec opencode "$command" "$@"
             ;;
     esac
