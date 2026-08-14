@@ -6,7 +6,7 @@
 
 FROM oven/bun:1
 
-LABEL org.opencontainers.image.source="https://github.com/ccsert/opencode-review-gitea"
+LABEL org.opencontainers.image.source="https://github.com/it-zone/opencode-review-gitea"
 LABEL org.opencontainers.image.description="AI-powered code review for Gitea/Forgejo PRs"
 LABEL org.opencontainers.image.licenses="MIT"
 
