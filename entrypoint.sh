@@ -65,7 +65,7 @@ validate_env() {
     # MiniMax Coding plan token must be handled in a special way
     mkdir -p ~/.local/share/opencode && \
       jq -n --arg key "$LLM_API_KEY" \
-        '{minimax-coding-plan:{type:"api",key:$key}}' \
+        '{"minimax-coding-plan":{type:"api",key:$key}}' \
         > ~/.local/share/opencode/auth.json
 
     # Warn if no LLM API key is set (not fatal - some providers don't need one)
