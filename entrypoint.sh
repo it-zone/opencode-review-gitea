@@ -62,6 +62,12 @@ validate_env() {
         exit 1
     fi
 
+    # MiniMax Coding plan token must be handled in a special way
+    mkdir -p ~/.local/share/opencode && \
+      jq -n --arg key "$LLM_API_KEY" \
+        '{minimax:{type:"api",key:$key}}' \
+        > ~/.local/share/opencode/auth.json
+
     # Warn if no LLM API key is set (not fatal - some providers don't need one)
     if [ -z "$DEEPSEEK_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ] && \
        [ -z "$OPENAI_API_KEY" ] && [ -z "$LLM_API_KEY" ] && \
@@ -72,7 +78,7 @@ validate_env() {
     fi
     
     log_success "Environment validated"
-    log_warn "Note: GITEA_TOKEN must have 'write:repository' scope to submit reviews"
+    # log_warn "Note: GITEA_TOKEN must have 'write:repository' scope to submit reviews"
 }
 
 infer_gitea_server_url() {
